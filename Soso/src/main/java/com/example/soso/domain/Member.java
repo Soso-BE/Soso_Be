@@ -54,6 +54,9 @@ public class Member extends Timestamped {
         return passwordEncoder.matches(password, this.password);
     }
 
+    @OneToMany(mappedBy = "member")
+    private List<Comment> commentList;
+
     //PostHeart와 다대일 관계
     @OneToMany(mappedBy = "member",
             cascade = CascadeType.ALL,

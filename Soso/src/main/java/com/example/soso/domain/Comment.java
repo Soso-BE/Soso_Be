@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Builder
 @AllArgsConstructor
@@ -14,23 +17,21 @@ import javax.persistence.*;
 @Getter
 @Table(name = "comments")
 @Entity
-public class Comment {
+public class Comment extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @NotNull
+    @NotBlank
+    @Size(min = 1, max = 255)
+    @Column(nullable = false, length = 120)
     private String content;
+
     @Column(columnDefinition = "TEXT", nullable = false)
     private String nickname;
 
-    @Column(name = "created_date")
-    @CreatedDate
-    private String createdDate;
 
-    @Column(name = "modified_date")
-    @CreatedDate
-    private String modifiedDate;
     @ManyToOne
     @JoinColumn(name = "postId")
     private Post post;
@@ -40,24 +41,4 @@ public class Comment {
     private Member member;
 
 
-    public Comment toEntity() {
-        Comment comments = Comment.builder()
-                .id(id)
-                .content(content)
-                .createdDate(createdDate)
-                .modifiedDate(modifiedDate)
-                .member(member)
-                .post(post)
-                .build();
-        return comments;
-    }
-
-    public void CommentResponse(Comment comment) {
-        this.id = comment.getId();
-        this.content = comment.getContent();
-        this.createdDate = comment.getCreatedDate();
-        this.modifiedDate = comment.getModifiedDate();
-        this.nickname = comment.getMember().getNickname();
-        this.postId = comment.getPost().getId();
-    }
 }
