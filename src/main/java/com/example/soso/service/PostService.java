@@ -98,7 +98,7 @@ public class PostService {
 
         PostRequestDto updatePost = PostRequestDto.builder()
                 .title(postRequestDto.getTitle())
-                .imageUrl(imageUrl)
+//                .imageUrl(imageUrl)
                 .fileName(fileName)
                 .build();
 

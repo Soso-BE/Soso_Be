@@ -32,14 +32,14 @@ public class Post extends Timestamped {
 
     public Post(PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
-        this.imageUrl = postRequestDto.getImageUrl();
+//        this.imageUrl = postRequestDto.getImageUrl();
         this.fileName = postRequestDto.getFileName();
     }
 
 
     public void update(PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
-        this.imageUrl = postRequestDto.getImageUrl();
+//        this.imageUrl = postRequestDto.getImageUrl();
         this.fileName = postRequestDto.getFileName();
     }
 
