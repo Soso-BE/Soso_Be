@@ -40,7 +40,8 @@ public class Post extends Timestamped {
     @Column
     private String fileName;
 
-
+    @Column
+    private int likeNum;
 
     public Post(PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
@@ -68,12 +69,12 @@ public class Post extends Timestamped {
 
     private Boolean isHeart = false;
 
-//    public void like(){
-//        this.likeNum +=1;
-//    }
-//    public void dislike(){
-//        this.likeNum -=1;
-//    }
+    public void like(){
+        this.likeNum +=1;
+    }
+    public void dislike(){
+        this.likeNum -=1;
+    }
 
 }
 
