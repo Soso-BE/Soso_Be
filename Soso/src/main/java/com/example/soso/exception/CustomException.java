@@ -1,4 +1,4 @@
-package com.example.soso.controller.exception;
+package com.example.soso.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.example.soso.controller.exception;
+package com.example.soso.exception;
 
 
 import java.time.LocalDateTime;
@@ -25,20 +25,20 @@ public class ErrorResponse {
                         .status(errorCode.getHttpStatus().value())
                         .error(errorCode.getHttpStatus().name())
                         .code(errorCode.name())
-                        .message(errorCode.getDetail())
+                        .message(errorCode.getErrorMessage())
                         .build()
                 );
     }
 
     public static ResponseEntity<ErrorResponse> toResponseEntity(ErrorCode errorCode,
-                                                                 String detail) {
+                                                                 String message) {
         return ResponseEntity
                 .status(errorCode.getHttpStatus())
                 .body(ErrorResponse.builder()
                         .status(errorCode.getHttpStatus().value())
                         .error(errorCode.getHttpStatus().name())
                         .code(errorCode.name())
-                        .message(detail)
+                        .message(errorCode.getErrorMessage())
                         .build()
                 );
     }

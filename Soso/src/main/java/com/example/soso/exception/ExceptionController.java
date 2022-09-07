@@ -1,8 +1,5 @@
-package com.example.soso.controller.exception;
+package com.example.soso.exception;
 
-
-import static com.example.soso.controller.exception.ErrorCode.INVALID_FIELD;
-import static com.example.soso.controller.exception.ErrorCode.WRONG_OBJECT;
 
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +21,14 @@ public class ExceptionController {
                 exception.getBindingResult().getAllErrors().stream().findFirst()
                         .orElse(null));
         log.error("handleValidationException throw MethodArgumentNotValidException : {}",
-                INVALID_FIELD);
-        return ErrorResponse.toResponseEntity(INVALID_FIELD, objectError.getDefaultMessage());
+                ErrorCode.INVALID_FIELD);
+        return ErrorResponse.toResponseEntity(ErrorCode.INVALID_FIELD, objectError.getDefaultMessage());
     }
 
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleNotReadableException() {
-        log.error("handleNotReadableException throw Exception : {}", WRONG_OBJECT);
-        return ErrorResponse.toResponseEntity(WRONG_OBJECT);
+        log.error("handleNotReadableException throw Exception : {}", ErrorCode.WRONG_OBJECT);
+        return ErrorResponse.toResponseEntity(ErrorCode.WRONG_OBJECT);
     }
 
     @ExceptionHandler(value = CustomException.class)

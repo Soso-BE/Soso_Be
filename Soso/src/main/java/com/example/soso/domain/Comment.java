@@ -1,5 +1,6 @@
 package com.example.soso.domain;
 
+import com.example.soso.controller.request.CommentRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,17 +29,24 @@ public class Comment extends Timestamped{
     @Column(nullable = false, length = 120)
     private String content;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(nullable = false)
     private String nickname;
 
 
-    @ManyToOne
-    @JoinColumn(name = "postId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "postId", nullable = false)
     private Post post;
 
-    @ManyToOne
-    @JoinColumn(name = "memberId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "memberId", nullable = false)
     private Member member;
 
+    public void update(CommentRequestDto commentRequestDto) {
+        this.content = commentRequestDto.getContent();
+    }
+
+    public boolean validateMember(Member member) {
+        return !this.member.equals(member);
+    }
 
 }
