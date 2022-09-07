@@ -16,15 +16,21 @@ public class Heart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private Long postId;
+    @JoinColumn(name = "postId", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Post post;
 
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "memberId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @Column
-    private boolean flag =false;
 
-    public boolean validateMember(Member member) { return !this.member.equals(member); }
+
+
+
+
+    @Column
+    public Boolean isLike = false;
+
+
 }

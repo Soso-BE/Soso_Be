@@ -31,6 +31,7 @@ dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.5.2'
 
     implementation group: 'io.awspring.cloud', name: 'spring-cloud-starter-aws', version: '2.4.2'
+    implementation group: 'org.javassist', name : 'javassist', version: '3.15.0-GA' //Error creating bean with name 에러 해결용
 
 //     JWT
     compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'

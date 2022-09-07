@@ -62,12 +62,12 @@ public class Post extends Timestamped {
     //이부분부터 넣으면 됨
     //@ManyToOne 과 @OneToMany 로 양방향 관계
     //CascadeType.REMOVE로 게시글이 삭제되면 댓글도 삭제
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @OrderBy("id asc") // 댓글 정렬
     private List<Comment> comments;
 
-
-    private Boolean isHeart = false;
+    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Heart> hearts;
 
     public void like(){
         this.likeNum +=1;

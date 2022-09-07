@@ -57,5 +57,13 @@ public class Member extends Timestamped {
     @OneToMany(mappedBy = "member")
     private List<Comment> commentList;
 
+    @OneToMany(mappedBy = "member")
+    private List<Heart> hearts;
+
+//    public void update(Heart heart){
+//        heart.setMember(this);
+//        this.hearts.update(heart);
+//    }
+
 
 }

@@ -60,6 +60,8 @@ public class SecurityConfiguration {
                 .antMatchers("/api/comment/**").permitAll()
                 .antMatchers("/api/subComment/**").permitAll()
                 .antMatchers("/api/auth/image").permitAll()
+                .antMatchers("/h2-console").permitAll()
+                .antMatchers("/api/like/**").permitAll()
                 .anyRequest().authenticated()
 
                 .and()

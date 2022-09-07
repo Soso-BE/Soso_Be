@@ -2,21 +2,22 @@ package com.example.soso.service;
 
 
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.example.soso.controller.response.ResponseDto;
 import com.example.soso.domain.Heart;
-import com.example.soso.domain.Member;
 import com.example.soso.domain.Post;
-import com.example.soso.jwt.TokenProvider;
+import com.example.soso.domain.UserDetailsImpl;
 
 import com.example.soso.repository.HeartRepository;
+import com.example.soso.repository.MemberRepository;
 import com.example.soso.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 
@@ -26,104 +27,51 @@ public class HeartService {
 
 
     private final PostRepository postRepository;
+
     private final HeartRepository heartRepository;
-    private final TokenProvider tokenProvider;
 
+    //좋아요를 등록합
     @Transactional
-    public ResponseDto<?> postLike(Long postId, HttpServletRequest request) {
-        if (null == request.getHeader("Refresh-Token")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
+    public ResponseDto<?> postLike(Long postId, Long memberId, @AuthenticationPrincipal UserDetailsImpl details) {
 
-        if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        Member member = validateMember(request);
-        if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
-
+        //게시글 아이디가 존재하고
         Post post = isPresentPost(postId);
         if (null == post) {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
         }
 
-//        Optional<Heart> heartList = heartRepository.findByPostId(postId);
-        if(heartRepository.findByPostId(postId).isEmpty()){
-            Heart heart = Heart.builder()
-                    .postId(postId)
-                    .member(member)
-                    .flag(true)
-                    .build();
+        //맴버 아이디가 현재 요청 들어온 유저 디테일의 아이디랑 같을때
+        if (heartRepository.findByMemberId(memberId).equals(details.getMember().getId())) {
+            //현재 isLike가 true면 삭제하기
+            Heart heart = null;
+            if (heart.isLike.equals(true)) {
+                heart.setIsLike(false);
+                post.dislike();
+                heartRepository.delete(heart);
+                return ResponseDto.success("dislike success");
+                //현재 isLike가 false면 등록하기
+            } else {
+                heart = Heart.builder()
+                        .post(post)
+                        .member(details.getMember())
+                        .isLike(true)
+                        .build();
 
-            post.like();
+                post.like();
 
-            heartRepository.save(heart);
-        }else{
-            return ResponseDto.fail("already like", "already like state");
+                heartRepository.save(heart);
+
+            }
         }
         return ResponseDto.success("like success");
     }
 
-    @Transactional
-    public ResponseDto<?> postDisLike(Long postId, HttpServletRequest request) {
-        if (null == request.getHeader("Refresh-Token")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
+        @Transactional(readOnly = true)
+        public Post isPresentPost (Long id){
+            Optional<Post> optionalPost = postRepository.findById(id);
+            return optionalPost.orElse(null);
         }
 
-        if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
 
-        Member member = validateMember(request);
-        if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
-
-        Post post = isPresentPost(postId);
-        if (null == post) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
-        }
-        Heart heart = isPresentPostLike(postId);
-        if (heart.validateMember(member)) {
-            return ResponseDto.fail("dislike fail", "좋아요 작성자가 아닙니다.");
-        }
-
-//        Optional<PostLike> postLikeList = postLikeRepository.findByPostId(postId);
-        if(heart.isFlag() == false){
-            return ResponseDto.fail("already dislike", "already dislike state");
-        }else{
-            heart.setFlag(false);
-            post.dislike();
-            heartRepository.delete(heart);
-        }
-        return ResponseDto.success("dislike success");
     }
 
-
-
-    @Transactional(readOnly = true)
-    public Post isPresentPost(Long id) {
-        Optional<Post> optionalPost = postRepository.findById(id);
-        return optionalPost.orElse(null);
-    }
-
-    @Transactional(readOnly = true)
-    public Heart isPresentPostLike(Long id) {
-        Optional<Heart> optionalHeart = heartRepository.findById(id);
-        return optionalHeart.orElse(null);
-    }
-
-    @Transactional
-    public Member validateMember(HttpServletRequest request) {
-        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
-            return null;
-        }
-        return tokenProvider.getMemberFromAuthentication();
-    }
-}
